@@ -1,3 +1,5 @@
+import json
+import os
 
 class Student:
     def __init__(self, name, roll_no, marks):
@@ -18,10 +20,41 @@ class Student:
 class StudentManager:
     def __init__(self):
         self.students = []
+        self.load_students()
+
+    def save_students(self):
+        data = []
+
+        for student in self.students:
+            data.append({
+            "name": student.name,
+            "roll_no": student.roll_no,
+            "marks": student.marks
+        })
+
+        with open("students.json", "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4)
+
+
+    def load_students(self):
+        if not os.path.exists("students.json"):
+            return
+
+        with open("students.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        for item in data:
+            student = Student(
+                item["name"],
+                item["roll_no"],
+                item["marks"]
+            )
+            self.students.append(student)
+
 
     def add_student(self, student):
         self.students.append(student)
-
+        self.save_students()
 
 
     def create_student(self):
